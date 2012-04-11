@@ -1,0 +1,21 @@
+#########################
+###   David Welch     ###
+###  Wild C Compiler  ###
+###    WSU CS4820     ###
+###     04 / 09       ###
+#########################
+
+Files:
+- about.txt 
+- compile.bat) does the following:
+	invoke the compiler (wildc_comp.exe) on wildc_program.wc
+	output the source MSIL to wildc_program.il
+	invoke ilasm on wildc_program.il, creating wildc_program.exe
+	delete the source code (wildc_program.il)
+	invoke the newly created program (wildc_program.exe)
+	
+- compile_noClean.bat) does the same thing, but leaves the source
+
+- wildc_comp.exe) the compiler
+
+- wildc_program.wc) a test wildc program

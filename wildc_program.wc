@@ -1,0 +1,243 @@
+int[100] rooms;
+string[100] occupants;
+float[100] rates;
+bool[100] vacancy;
+int billsPaid;
+float earned;
+float incoming;
+<int> initialize(void){
+	int i;
+	i:=0;
+	while(i<100){
+		rooms[i]:=i;
+		occupants[i]:= "Vacant";
+		rates[i]:= 0;
+		vacancy[i]:= true;
+		i:=i+1;
+	}
+}
+<void> clearScreen(void){
+	int i;
+	i:=0;
+	while(i<20){
+		print "\n";
+		i:=i+1;
+	}
+}
+<void> printRuler(void){
+	int i;
+	i:=0;
+	while(i<80){
+		print "-";
+		i:=i+1;
+	}
+}
+<bool> isVacant(int room){
+	if(room < 0 || room > 99){
+		return false;
+	}
+	return vacancy[room];
+}
+<bool> reserve(int room){
+	if( isVacant(room) ){
+		vacancy[room]:= false;
+		return true;
+	}else{
+		return false;
+	}
+}
+<bool> checkIn(int room, string name, float rate){
+	if(room < 0 || room > 99){
+		return false;
+	}
+	if( isVacant( room ) || occupants[room] == "Vacant"){
+		occupants[room] := name;
+		rates[room] := rate;
+		return true;
+	}
+}
+<void> checkOut(int room){
+	if(room >= 0 && room <= 99){
+		vacancy[room] := true;
+		rates[room] := 0;
+		occupants[room] := "Vacant";
+	}
+}
+<bool> release(int room){
+	if( isVacant(room) ){
+		print "Room #", room, " is not reserved! \n";
+		return false;
+	}else{
+		if(occupants[room] == "Vacant"){
+			vacancy[room]:=true;
+			return true;
+		}else{
+			print "Room #", room, " is occupied, not reserved! \n";
+			return false;
+		}
+	}
+}
+<void> printDetails(int room){
+	int empty;
+	int reserved;
+	int occupied;
+	if(room < 0-1 || room > 99){
+		print "That room number does not exist! \n";
+	}else{
+		if(room >= 0){
+			print "\nRoom #\tVacant\tRent\tTenant(s) \n";
+			(void) printRuler();
+			print rooms[room] + 1, "\t", vacancy[room], "\t$", rates[room], "\t", occupants[room], "\n";
+		}else{
+			empty:=0;
+			reserved:=0;
+			occupied:=0;
+			room:=0;
+			while(room<100){
+				if(isVacant(room)){
+					empty:=empty + 1;
+				}else{
+					if(occupants[room] == "Vacant"){
+						reserved:=reserved + 1;
+					}else{
+						occupied:=occupied + 1;
+						room:=room + 1;
+					}
+				}
+				room:=room + 1;
+			}
+			if(occupied + reserved > 0){
+				print "\nRoom #\tVacant\tRent\tTenant(s) \n";
+				(void) printRuler();
+				room:=0;
+				while(room<100){
+					if(isVacant == false && occupants[room] != "Vacant")
+						print rooms[room] + 1, "\t", vacancy[room], "\t$", rates[room], "\t", occupants[room], "\n";
+					}
+				}
+			}
+			print "\n", "Capacity: ", (occupied + reserved) / 100, "%\tOccupied Rooms: ", occupied, "\tReserved Rooms: ", reserved, "\n";
+			
+		}
+		print "\n";
+	}
+}
+<void> printStats(void){
+	int room;
+	float rec;
+	int occupied;
+	int nameLen;
+	string name;
+	nameLen := 0;
+	occupied:=0;
+	room:=0;
+	rec := 0;
+	while(room < 99){
+		if(isVacant(room) == false && occupants[room] != "Vacant" ){
+			occupied := occupied + 1;
+			rec := rec + rates[room];
+			name := occupants[room];
+			nameLen := nameLen + name.length;
+		}
+		room := room + 1;
+	}
+	(void) printRuler();
+	print "Statistics: \n";
+	print " - Rooms Occupied: ", occupied, "\tAverage Occupant Name Length: ", nameLen, "\n";
+	print " - Receivable Income: $", rec, "\tAverage Rate: $", rec / occupied, "\tIncome Received: $", earned, "\n";
+	print " - Total: $", rec + earned, "\n";
+	(void) printRuler();
+	
+}
+<void> main(void){
+	string cmd;
+	int i;
+	bool b;
+	bool valid;
+	bool skipCmd;
+	float f;
+	string s;
+	string name;
+	float rate;
+	
+	earned:=0;
+	billsPaid:=0;
+	name := "";
+	rate := 7.75;
+	cmd:= "help";
+	i := initialize();
+	while(cmd != "exit" && cmd != "x"){
+		skipCmd := false;
+		valid:=false;
+		if(cmd == "help" || cmd == "?" || cmd == "h"){
+			(void) printRuler();
+			print "Motel $7.75 Advanced Scheduling System \n\n";
+			print " - Options:\t(d) Details | (i) Check In | (o) Check Out | (s) Statistics \n";
+			(void) printRuler();
+			print "\n";
+			valid:=true;
+		}
+		if(cmd == "details" || cmd == "d"){
+			print " - Enter room number or press enter for all rooms: ";
+			input i;
+			i:=i - 1;
+			(void) printDetails(i);
+			valid:=true;
+		}
+		if(cmd == "check in" || cmd == "Check In" || cmd == "i" ){
+			print " - Enter room number being checked in: ";
+			input i;
+			i:=i-1;
+			if(isVacant(i)){
+				if( reserve(i) ){
+					print " - Guest Name: ";
+					input name;
+					print " - Nightly Rate or enter for $7.75: ";
+					input rate;
+					if( rate == 0 ){
+						rate:= 7.75;
+					}
+					if(checkIn(i, name, rate)){
+						print " * Checked in!\n\n";
+					}else{
+						b:= release(i);
+						print " * Failed checking in to Room #", i+1, "\n\n";
+					}
+				}else{
+					print " * Could not reserve Room #", i+1, "\n\n";
+				}
+			}else{
+				print " * Unable to check into Room #", i+1, "\n\n";
+			}
+			
+			valid:=true;
+		}
+		if(cmd == "check out" || cmd == "Check Out" || cmd == "o" ){
+			print " - Enter room number checking out: ";
+			input i;
+			i:=i-1;
+			if(isVacant(i)){
+				print " * Room #", i+1, " is not occupied! \n\n"; 
+			}else{
+				earned := earned + rates[i];
+				billsPaid:= billsPaid + 1;
+				print " * Successfully checked '", occupants[i], "' out of Room #", i+1, "!\n\n";
+				(void) checkOut(i);
+				
+			}
+			valid:=true;
+		}
+		if(cmd == "s" || cmd == "Statistics" || cmd == "statistics" || cmd == "statistic" || cmd == "Statistic" ){
+			(void) printStats();
+		}
+		if(valid == false){
+			print " ! Unknown Option. Type 'help' for more options \n\n";
+		}
+		if( skipCmd == false){
+			print "Enter Command: ";
+			input cmd;
+			print "\n";
+		}
+	}	
+	
+}
